@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+
+{% block title %}Transactions - Budget Planner{% endblock %}
+
+{% block extra_css %}
+<style>
+.modern-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fc 100%);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.modern-card:hover::before {
+    left: 100%;
+}
+
+.modern-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    margin-bottom: 2.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.transaction-item {
+    background: linear-gradient(135deg, #f8f9fc 0%, #ffffff 100%);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-left: 5px solid;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.transaction-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+}
+
+.transaction-item:hover::before {
+    transform: translateX(100%);
+}
+
+.transaction-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.transaction-income {
+    border-left-color: #11998e;
+}
+
+.transaction-expense {
+    border-left-color: #fc466b;
+}
+
+.btn-modern {
+    border-radius: 25px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-modern:hover::before {
+    left: 100%;
+}
+
+.form-control, .form-select {
+    border-radius: 15px;
+    border: 2px solid rgba(102, 126, 234, 0.1);
+    transition: all 0.3s ease;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-1px);
+}
+
+.badge-modern {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+            <h1 class="mb-2"><i class="fas fa-list"></i> Transaction History</h1>
+            <p class="mb-0 opacity-75">Track and manage all your financial transactions</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a href="{% url 'add_transaction' %}" class="btn btn-light btn-modern">
+                <i class="fas fa-plus"></i> Add Transaction
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Filter Section -->
+<div class="modern-card mb-4">
+    <div class="card-header border-0" style="background: transparent; padding: 2rem 2rem 1rem;">
+        <h4 class="mb-0"><i class="fas fa-filter text-info"></i> Filter & Search</h4>
+        <p class="text-muted mt-1 mb-0">Find specific transactions using filters</p>
+    </div>
+    <div class="card-body" style="padding: 1rem 2rem 2rem;">
+        <form method="get" class="row g-4">
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-muted">{{ filter_form.start_date.label }}</label>
+                {{ filter_form.start_date }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-muted">{{ filter_form.end_date.label }}</label>
+                {{ filter_form.end_date }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-muted">{{ filter_form.category.label }}</label>
+                {{ filter_form.category }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-muted">{{ filter_form.transaction_type.label }}</label>
+                {{ filter_form.transaction_type }}
+            </div>
+            <div class="col-12">
+                <div class="d-flex gap-2 flex-wrap">
+                    <button type="submit" class="btn btn-primary btn-modern">
+                        <i class="fas fa-search"></i> Apply Filters
+                    </button>
+                    <a href="{% url 'transaction_list' %}" class="btn btn-secondary btn-modern">
+                        <i class="fas fa-times"></i> Clear All
+                    </a>
+                    <div class="ms-auto">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> 
+                            Showing {{ transactions|length }} transaction{{ transactions|length|pluralize }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+                    <i class="fas fa-times"></i> Clear
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Enhanced Transactions Display -->
+<div class="modern-card">
+    <div class="card-header border-0" style="background: transparent; padding: 2rem 2rem 1rem;">
+        <h4 class="mb-0"><i class="fas fa-history text-success"></i> Transaction History</h4>
+        <p class="text-muted mt-1 mb-0">Your complete financial transaction record</p>
+    </div>
+    <div class="card-body" style="padding: 1rem 2rem 2rem;">
+        {% if page_obj %}
+            <div class="transaction-list">
+                {% for transaction in page_obj %}
+                    <div class="transaction-item {% if transaction.transaction_type == 'income' %}transaction-income{% else %}transaction-expense{% endif %}">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <div class="date-section text-center">
+                                    <div class="date-day fw-bold text-primary">{{ transaction.date|date:"d" }}</div>
+                                    <div class="date-month small text-muted">{{ transaction.date|date:"M Y" }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="transaction-details">
+                                    <h6 class="mb-1">{{ transaction.description|truncatechars:40 }}</h6>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2" style="font-size: 1.2rem;">{{ transaction.category.icon }}</span>
+                                        <span class="text-muted small">{{ transaction.category.name }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="badge badge-modern {% if transaction.transaction_type == 'income' %}bg-success{% else %}bg-danger{% endif %}">
+                                    <i class="fas {% if transaction.transaction_type == 'income' %}fa-arrow-up{% else %}fa-arrow-down{% endif %} me-1"></i>
+                                    {{ transaction.get_transaction_type_display }}
+                                </span>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                <div class="amount-display">
+                                    <div class="amount fw-bold {% if transaction.transaction_type == 'income' %}text-success{% else %}text-danger{% endif %}">
+                                        {% if transaction.transaction_type == 'income' %}+{% else %}-{% endif %}${{ transaction.amount|floatformat:2 }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <div class="action-buttons">
+                                    <a href="{% url 'edit_transaction' transaction.pk %}" class="btn btn-outline-primary btn-sm me-1" title="Edit Transaction">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'delete_transaction' transaction.pk %}" class="btn btn-outline-danger btn-sm" title="Delete Transaction">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+                <nav aria-label="Transaction pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.transaction_type %}&transaction_type={{ request.GET.transaction_type }}{% endif %}">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.transaction_type %}&transaction_type={{ request.GET.transaction_type }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.transaction_type %}&transaction_type={{ request.GET.transaction_type }}{% endif %}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No Transactions Found</h4>
+                <p class="text-muted">Start by adding your first transaction.</p>
+                <a href="{% url 'add_transaction' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Your First Transaction
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

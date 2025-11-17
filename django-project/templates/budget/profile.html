@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - Budget Planner{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="gradient-text">
+            <i class="fas fa-user-circle me-2"></i> Profile Settings
+        </h1>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Main Profile Card -->
+            <div class="modern-card floating">
+                <div class="card-header gradient-bg">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-user-edit me-2"></i> Profile Information
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- User Information -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-user text-primary me-2"></i>Username
+                                    </label>
+                                    <input type="text" class="form-control modern-input" value="{{ user.username }}" readonly>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1"></i>Username cannot be changed
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-envelope text-primary me-2"></i>Email Address
+                                    </label>
+                                    <input type="email" class="form-control modern-input" value="{{ user.email }}" readonly>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1"></i>Contact admin to change email
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Financial Settings -->
+                        <h6 class="gradient-text mb-3">
+                            <i class="fas fa-chart-line me-2"></i>Financial Settings
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.monthly_income.id_for_label }}" class="form-label fw-bold">
+                                        <i class="fas fa-money-bill-wave text-success me-2"></i>Monthly Income
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text gradient-bg text-white">$</span>
+                                        {{ form.monthly_income }}
+                                    </div>
+                                    {% if form.monthly_income.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.monthly_income.errors }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1"></i>Your regular monthly income
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.savings_goal.id_for_label }}" class="form-label fw-bold">
+                                        <i class="fas fa-piggy-bank text-warning me-2"></i>Monthly Savings Goal
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text gradient-bg text-white">$</span>
+                                        {{ form.savings_goal }}
+                                    </div>
+                                    {% if form.savings_goal.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.savings_goal.errors }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1"></i>Amount you want to save each month
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-gradient btn-lg">
+                                <i class="fas fa-save me-2"></i> Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Account Statistics -->
+            <div class="modern-card floating mb-4">
+                <div class="card-header gradient-bg">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-chart-line me-2"></i> Account Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-item">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="stat-label">
+                                <i class="fas fa-receipt text-primary me-2"></i>Total Transactions
+                            </span>
+                            <span class="badge bg-gradient-primary pulse">{{ total_transactions }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="stat-label">
+                                <i class="fas fa-tags text-success me-2"></i>Categories Created
+                            </span>
+                            <span class="badge bg-gradient-success pulse">{{ total_categories }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="stat-label">
+                                <i class="fas fa-chart-pie text-info me-2"></i>Budgets Set
+                            </span>
+                            <span class="badge bg-gradient-info pulse">{{ total_budgets }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="stat-label">
+                                <i class="fas fa-calendar-alt text-warning me-2"></i>Member Since
+                            </span>
+                            <span class="text-muted fw-bold">{{ user.date_joined|date:"M Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="modern-card floating mb-4">
+                <div class="card-header gradient-bg">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-bolt me-2"></i> Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'add_transaction' %}" class="btn btn-outline-primary modern-btn">
+                            <i class="fas fa-plus me-2"></i> Add Transaction
+                        </a>
+                        <a href="{% url 'create_budget' %}" class="btn btn-outline-success modern-btn">
+                            <i class="fas fa-chart-pie me-2"></i> Create Budget
+                        </a>
+                        <a href="{% url 'add_category' %}" class="btn btn-outline-info modern-btn">
+                            <i class="fas fa-tags me-2"></i> Add Category
+                        </a>
+                        <a href="{% url 'reports_view' %}" class="btn btn-outline-warning modern-btn">
+                            <i class="fas fa-chart-bar me-2"></i> View Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Health -->
+            <div class="modern-card floating">
+                <div class="card-header gradient-bg">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-heartbeat me-2"></i> Financial Health
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-bold text-primary">Current Month Savings</span>
+                            <span class="small fw-bold text-success">
+                                ${{ profile.current_savings|floatformat:2 }}
+                            </span>
+                        </div>
+                        <div class="progress modern-progress">
+                            <div class="progress-bar 
+                                {% if profile.current_savings >= profile.savings_goal %}bg-success{% elif profile.current_savings >= 0 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                role="progressbar" 
+                                style="width: {% if profile.savings_goal > 0 %}{% widthratio profile.current_savings profile.savings_goal 100 %}{% else %}0{% endif %}%"
+                                aria-valuenow="{% if profile.savings_goal > 0 %}{% widthratio profile.current_savings profile.savings_goal 100 %}{% else %}0{% endif %}"
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-bullseye me-1"></i>Goal: ${{ profile.savings_goal|floatformat:2 }}
+                        </small>
+                    </div>
+                    
+                    <div class="alert modern-alert
+                        {% if profile.current_savings >= profile.savings_goal %}alert-success{% elif profile.current_savings >= 0 %}alert-warning{% else %}alert-danger{% endif %} 
+                        p-3">
+                        <i class="fas 
+                            {% if profile.current_savings >= profile.savings_goal %}fa-check-circle{% elif profile.current_savings >= 0 %}fa-exclamation-triangle{% else %}fa-times-circle{% endif %} me-2"></i>
+                        <small class="fw-bold">
+                            {% if profile.current_savings >= profile.savings_goal %}
+                                Excellent! You've met your savings goal this month.
+                            {% elif profile.current_savings >= 0 %}
+                                You're saving, but haven't reached your goal yet.
+                            {% else %}
+                                You're spending more than you're earning this month.
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

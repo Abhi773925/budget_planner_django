@@ -1,0 +1,114 @@
+{% extends 'base.html' %} {% block title %}Edit Category - Budget Planner{%
+endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h3><i class="fas fa-edit"></i> Edit Category</h3>
+        <p class="text-muted mb-0">Update category: {{ category.name }}</p>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="{{ form.name.id_for_label }}" class="form-label"
+              >Category Name *</label
+            >
+            {{ form.name }} {% if form.name.errors %}
+            <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label
+              for="{{ form.category_type.id_for_label }}"
+              class="form-label"
+              >Category Type *</label
+            >
+            {{ form.category_type }} {% if form.category_type.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.category_type.errors }}
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="{{ form.icon.id_for_label }}" class="form-label"
+                >Icon</label
+              >
+              {{ form.icon }} {% if form.icon.errors %}
+              <div class="invalid-feedback d-block">{{ form.icon.errors }}</div>
+              {% endif %}
+              <div class="form-text">Use emoji icons (e.g., 🍽️, 🚗, 💰)</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="{{ form.color.id_for_label }}" class="form-label"
+                >Color</label
+              >
+              {{ form.color }} {% if form.color.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.color.errors }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <a href="{% url 'category_list' %}" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Back to Categories
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Update Category
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Category Usage Info -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5><i class="fas fa-info-circle"></i> Category Usage</h5>
+      </div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-6">
+            <h4 class="text-primary">{{ category.transactions.count }}</h4>
+            <small class="text-muted">Transactions</small>
+          </div>
+          <div class="col-6">
+            <h4 class="text-info">{{ category.budgets.count }}</h4>
+            <small class="text-muted">Budgets</small>
+          </div>
+        </div>
+        {% if category.transactions.count > 0 or category.budgets.count > 0 %}
+        <hr />
+        <p class="text-muted small mb-0">
+          <i class="fas fa-exclamation-triangle text-warning"></i>
+          This category is being used. Changing the type may affect existing
+          data.
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Add Bootstrap classes to form fields
+    const formFields = document.querySelectorAll(
+      'input[type="text"], select, input[type="color"], textarea'
+    );
+    formFields.forEach((field) => {
+      if (field.type === "color") {
+        field.classList.add("form-control", "form-control-color");
+      } else {
+        field.classList.add("form-control");
+      }
+    });
+  });
+</script>
+{% endblock %}

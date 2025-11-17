@@ -1,0 +1,312 @@
+{% extends 'base.html' %} {% block title %}Budget Planner - Take Control of Your
+Finances{% endblock %} {% block extra_css %}
+<style>
+  .hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.95;
+  }
+
+  .hero-buttons .btn {
+    margin: 0 10px;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-outline-light:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .features-section {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+  }
+
+  .feature-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+  }
+
+  .feature-description {
+    color: #6c757d;
+    line-height: 1.6;
+  }
+
+  .stats-section {
+    background: linear-gradient(45deg, #2c3e50, #34495e);
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cta-section {
+    background-color: #28a745;
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+  }
+
+  .cta-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .cta-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.95;
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+
+    .hero-buttons .btn {
+      display: block;
+      margin: 10px auto;
+      width: 250px;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2">
+        <h1 class="hero-title">Take Control of Your Finances</h1>
+        <p class="hero-subtitle">
+          Track expenses, set budgets, and achieve your financial goals with our
+          powerful budget planning tool.
+        </p>
+        <div class="hero-buttons">
+          <a href="{% url 'signup' %}" class="btn btn-primary btn-lg"
+            >Get Started Free</a
+          >
+          <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg"
+            >Sign In</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <h2 class="display-4 font-weight-bold text-dark mb-4">
+          Powerful Features
+        </h2>
+        <p class="lead text-muted">
+          Everything you need to manage your finances effectively
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      {% for feature in features %}
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="feature-card text-center">
+          <div class="feature-icon">{{ feature.icon }}</div>
+          <h4 class="feature-title">{{ feature.title }}</h4>
+          <p class="feature-description">{{ feature.description }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 mb-4">
+        <span class="stat-number">100%</span>
+        <span class="stat-label">Free to Use</span>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <span class="stat-number">24/7</span>
+        <span class="stat-label">Access</span>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <span class="stat-number">∞</span>
+        <span class="stat-label">Transactions</span>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <span class="stat-number">🔒</span>
+        <span class="stat-label">Secure</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <h2 class="display-4 font-weight-bold text-dark mb-4">How It Works</h2>
+        <p class="lead text-muted">Simple steps to financial freedom</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4 col-md-6 mb-4 text-center">
+        <div class="mb-3">
+          <span class="display-4 text-primary">1</span>
+        </div>
+        <h4 class="font-weight-bold">Sign Up</h4>
+        <p class="text-muted">Create your free account in less than a minute</p>
+      </div>
+
+      <div class="col-lg-4 col-md-6 mb-4 text-center">
+        <div class="mb-3">
+          <span class="display-4 text-primary">2</span>
+        </div>
+        <h4 class="font-weight-bold">Add Transactions</h4>
+        <p class="text-muted">
+          Log your income and expenses with our easy-to-use interface
+        </p>
+      </div>
+
+      <div class="col-lg-4 col-md-6 mb-4 text-center">
+        <div class="mb-3">
+          <span class="display-4 text-primary">3</span>
+        </div>
+        <h4 class="font-weight-bold">Track & Save</h4>
+        <p class="text-muted">
+          Monitor your progress and achieve your financial goals
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2">
+        <h2 class="cta-title">Ready to Start Your Financial Journey?</h2>
+        <p class="cta-subtitle">
+          Join thousands of users who have taken control of their finances
+        </p>
+        <a
+          href="{% url 'signup' %}"
+          class="btn btn-outline-light btn-lg px-5 py-3"
+        >
+          Start Budgeting Now
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Add smooth scrolling to anchor links
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute("href")).scrollIntoView({
+          behavior: "smooth",
+        });
+      });
+    });
+
+    // Add animation to feature cards on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px",
+    };
+
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = "1";
+          entry.target.style.transform = "translateY(0)";
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll(".feature-card").forEach((card) => {
+      card.style.opacity = "0";
+      card.style.transform = "translateY(20px)";
+      card.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+      observer.observe(card);
+    });
+  });
+</script>
+{% endblock %}

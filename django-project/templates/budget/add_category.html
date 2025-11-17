@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Category - Budget Planner{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-plus"></i> Add Category</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">Category Name *</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.name.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.category_type.id_for_label }}" class="form-label">Category Type *</label>
+                        {{ form.category_type }}
+                        {% if form.category_type.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.category_type.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Choose whether this category is for income or expenses.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.icon.id_for_label }}" class="form-label">Icon</label>
+                        {{ form.icon }}
+                        {% if form.icon.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.icon.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Choose an emoji icon to represent this category.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.color.id_for_label }}" class="form-label">Color</label>
+                        {{ form.color }}
+                        {% if form.color.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.color.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Choose a color to help identify this category.</div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'category_list' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Common Icons -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-icons"></i> Common Icons</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <h6>Income Icons</h6>
+                        <div class="common-icons">
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="💼">💼 Salary</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="💻">💻 Freelance</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="📈">📈 Investment</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="🏦">🏦 Interest</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h6>Expense Icons</h6>
+                        <div class="common-icons">
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="🍽️">🍽️ Food</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="🚗">🚗 Transport</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="🏠">🏠 Housing</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="🛍️">🛍️ Shopping</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="🎬">🎬 Entertainment</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="💡">💡 Utilities</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="🏥">🏥 Healthcare</span>
+                            <span class="badge bg-light text-dark m-1 p-2 icon-suggestion" data-icon="📚">📚 Education</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Icon suggestion click handler
+document.addEventListener('DOMContentLoaded', function() {
+    const iconSuggestions = document.querySelectorAll('.icon-suggestion');
+    const iconInput = document.getElementById('{{ form.icon.id_for_label }}');
+    
+    iconSuggestions.forEach(suggestion => {
+        suggestion.addEventListener('click', function() {
+            const icon = this.getAttribute('data-icon');
+            if (iconInput) {
+                iconInput.value = icon;
+            }
+        });
+        
+        // Add cursor pointer style
+        suggestion.style.cursor = 'pointer';
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,634 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Budget Planner{% endblock %}
+
+{% block extra_css %}
+<style>
+.gradient-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gradient-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.gradient-card-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.gradient-card-danger {
+    background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+}
+
+.gradient-card-warning {
+    background: linear-gradient(135deg, #FDBB2D 0%, #22C1C3 100%);
+}
+
+.gradient-card-info {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.modern-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fc 100%);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.modern-card:hover::before {
+    left: 100%;
+}
+
+.modern-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    margin-bottom: 2.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.stat-icon {
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.btn-modern {
+    border-radius: 25px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-modern:hover::before {
+    left: 100%;
+}
+
+.progress-modern {
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-bar-modern {
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+            <h1 class="mb-2"><i class="fas fa-tachometer-alt"></i> Financial Dashboard</h1>
+            <p class="mb-0 opacity-75">Your complete financial overview at a glance</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a href="{% url 'add_transaction' %}" class="btn btn-light btn-modern me-2">
+                <i class="fas fa-plus"></i> Quick Add
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Financial Summary Cards -->
+<div class="row mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="card gradient-card-success text-white h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <h2 class="mb-1">${{ monthly_income|floatformat:2 }}</h2>
+                    <p class="mb-0 opacity-75">Monthly Income</p>
+                    <small class="opacity-50">This month's earnings</small>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card gradient-card-danger text-white h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <h2 class="mb-1">${{ monthly_expenses|floatformat:2 }}</h2>
+                    <p class="mb-0 opacity-75">Monthly Expenses</p>
+                    <small class="opacity-50">Current spending</small>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card {% if monthly_savings >= 0 %}gradient-card-info{% else %}gradient-card-warning{% endif %} text-white h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <h2 class="mb-1">
+                        {% if monthly_savings >= 0 %}+{% endif %}${{ monthly_savings|floatformat:2 }}
+                    </h2>
+                    <p class="mb-0 opacity-75">Monthly Savings</p>
+                    <small class="opacity-50">
+                        {% if monthly_savings >= 0 %}Building wealth{% else %}Overspending{% endif %}
+                    </small>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas {% if monthly_savings >= 0 %}fa-piggy-bank{% else %}fa-exclamation-triangle{% endif %}"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-piggy-bank fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts and Recent Activity -->
+<div class="row mt-4">
+    <div class="col-lg-8 mb-4">
+        <div class="modern-card">
+            <div class="card-header border-0" style="background: transparent; padding: 2rem 2rem 1rem;">
+                <h4 class="mb-0"><i class="fas fa-chart-pie text-primary"></i> Expense Breakdown</h4>
+                <p class="text-muted mt-1 mb-0">Visual representation of your spending patterns</p>
+            </div>
+            <div class="card-body" style="padding: 1rem 2rem 2rem;">
+                <div style="background: linear-gradient(135deg, #f8f9fc 0%, #ffffff 100%); border-radius: 15px; padding: 1.5rem;">
+                    <canvas id="expenseChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+        <div class="modern-card h-100">
+            <div class="card-header border-0" style="background: transparent; padding: 2rem 2rem 1rem;">
+                <h4 class="mb-0"><i class="fas fa-clock text-info"></i> Recent Activity</h4>
+                <p class="text-muted mt-1 mb-0">Latest financial transactions</p>
+            </div>
+            <div class="card-body" style="padding: 1rem 2rem 2rem;">
+                {% if recent_transactions %}
+                    <div class="transaction-list">
+                        {% for transaction in recent_transactions %}
+                            <div class="transaction-item p-3 mb-3" style="background: linear-gradient(135deg, #f8f9fc 0%, #ffffff 100%); border-radius: 12px; border-left: 4px solid {% if transaction.transaction_type == 'income' %}#11998e{% else %}#fc466b{% endif %};">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <span class="me-2" style="font-size: 1.2rem;">{{ transaction.category.icon }}</span>
+                                            <strong class="text-truncate">{{ transaction.description|truncatechars:20 }}</strong>
+                                        </div>
+                                        <small class="text-muted">{{ transaction.date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="badge {% if transaction.transaction_type == 'income' %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+                                            {% if transaction.transaction_type == 'income' %}+{% else %}-{% endif %}${{ transaction.amount|floatformat:2 }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'transaction_list' %}" class="btn btn-primary btn-modern btn-sm">
+                            <i class="fas fa-eye"></i> View All Transactions
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; width: 80px; height: 80px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-plus text-white fa-2x"></i>
+                        </div>
+                        <h6 class="text-muted">No Transactions Yet</h6>
+                        <p class="text-muted small mb-3">Start by adding your first transaction</p>
+                        <a href="{% url 'add_transaction' %}" class="btn btn-primary btn-modern btn-sm">
+                            <i class="fas fa-plus"></i> Add First Transaction
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Budget Alerts -->
+{% if budget_alerts %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <h6><i class="fas fa-exclamation-triangle"></i> Budget Alerts</h6>
+            {% for alert in budget_alerts %}
+                <div class="small">
+                    <strong>{{ alert.category }}</strong>: {{ alert.percentage|floatformat:1 }}% used
+                    {% if alert.is_over %} (Over budget!){% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Financial Insights Section -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line"></i> Financial Insights</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- This Month Summary -->
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="text-center p-3 mb-3 border rounded" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                                    <h4 class="text-white mb-1">${{ monthly_income|floatformat:2 }}</h4>
+                                    <p class="text-white mb-0 opacity-75">This Month Income</p>
+                                    {% if total_transaction_count == 0 %}
+                                        <small class="text-white opacity-50">No data yet</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="text-center p-3 mb-3 border rounded" style="background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);">
+                                    <h4 class="text-white mb-1">${{ monthly_expenses|floatformat:2 }}</h4>
+                                    <p class="text-white mb-0 opacity-75">This Month Expenses</p>
+                                    {% if total_transaction_count == 0 %}
+                                        <small class="text-white opacity-50">Start tracking</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="text-center p-3 mb-3 border rounded" style="background: linear-gradient(135deg, {% if monthly_savings >= 0 %}#667eea 0%, #764ba2 100%{% else %}#fc466b 0%, #3f5efb 100%{% endif %});">
+                                    <h4 class="text-white mb-1">
+                                        {% if monthly_savings >= 0 %}+{% endif %}${{ monthly_savings|floatformat:2 }}
+                                    </h4>
+                                    <p class="text-white mb-0 opacity-75">This Month Savings</p>
+                                    {% if total_transaction_count == 0 %}
+                                        <small class="text-white opacity-50">Add transactions</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Financial Health Indicators -->
+                    <div class="col-md-8">
+                        <h6 class="mb-4">Financial Health Indicators</h6>
+                        
+                        {% if total_transaction_count > 0 %}
+                            <!-- Savings Rate -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">Savings Rate</span>
+                                    <span class="badge {% if savings_rate >= 20 %}bg-success{% elif savings_rate >= 10 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ savings_rate }}%
+                                    </span>
+                                </div>
+                                <div class="progress" style="height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px;">
+                                    <div class="progress-bar {% if savings_rate >= 20 %}bg-success{% elif savings_rate >= 10 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         role="progressbar" 
+                                         style="width: {% if savings_rate > 100 %}100{% else %}{{ savings_rate }}{% endif %}%; border-radius: 6px;">
+                                    </div>
+                                </div>
+                                <small class="text-muted">Target: 20% or higher</small>
+                            </div>
+                            
+                            <!-- Expense Ratio -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">Expense Ratio</span>
+                                    <span class="badge {% if expense_ratio <= 80 %}bg-success{% elif expense_ratio <= 90 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ expense_ratio }}%
+                                    </span>
+                                </div>
+                                <div class="progress" style="height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px;">
+                                    <div class="progress-bar {% if expense_ratio <= 80 %}bg-success{% elif expense_ratio <= 90 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         role="progressbar" 
+                                         style="width: {% if expense_ratio > 100 %}100{% else %}{{ expense_ratio }}{% endif %}%; border-radius: 6px;">
+                                    </div>
+                                </div>
+                                <small class="text-muted">Target: Keep below 80% of income</small>
+                            </div>
+                            
+                            <!-- Financial Status Alert -->
+                            <div class="alert 
+                                {% if financial_status == 'excellent' %}alert-success
+                                {% elif financial_status == 'good' %}alert-info  
+                                {% elif financial_status == 'okay' %}alert-warning
+                                {% elif financial_status == 'warning' %}alert-danger
+                                {% else %}alert-secondary{% endif %} 
+                                border-0" style="border-radius: 12px;">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-3">
+                                        <i class="fas 
+                                            {% if financial_status == 'excellent' %}fa-check-circle
+                                            {% elif financial_status == 'good' %}fa-thumbs-up
+                                            {% elif financial_status == 'okay' %}fa-exclamation-triangle  
+                                            {% elif financial_status == 'warning' %}fa-exclamation-circle
+                                            {% else %}fa-info-circle{% endif %} fa-lg">
+                                        </i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="alert-heading mb-1">{{ financial_message }}</h6>
+                                        <small>💡 <strong>Tip:</strong> {{ financial_tip }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <!-- No Data State -->
+                            <div class="text-center py-4">
+                                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; width: 80px; height: 80px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-chart-line text-white fa-2x"></i>
+                                </div>
+                                <h6 class="text-muted">Start Your Financial Journey</h6>
+                                <p class="text-muted small mb-3">Add your first income and expense transactions to see detailed financial insights.</p>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'add_transaction' %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus"></i> Add First Transaction
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Budget Overview -->
+{% if budgets %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-chart-pie"></i> Budget Overview</h5>
+                <a href="{% url 'budget_overview' %}" class="btn btn-outline-primary btn-sm">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for budget in budgets %}
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ budget.category.icon }} {{ budget.category.name }}</span>
+                            <span class="small">${{ budget.spent_amount|floatformat:2 }} / ${{ budget.amount|floatformat:2 }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar 
+                                {% if budget.is_over_budget %}bg-danger{% elif budget.percentage_used > 80 %}bg-warning{% elif budget.percentage_used > 60 %}bg-info{% else %}bg-success{% endif %}"
+                                role="progressbar" 
+                                style="width: {% if budget.percentage_used > 100 %}100{% else %}{{ budget.percentage_used }}{% endif %}%"
+                                aria-valuenow="{{ budget.percentage_used }}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">{{ budget.percentage_used|floatformat:1 }}% used</small>
+                            <small class="{% if budget.remaining_amount < 0 %}text-danger{% else %}text-success{% endif %}">
+                                ${{ budget.remaining_amount|floatformat:2 }} remaining
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No Budgets Set</h5>
+                <p class="text-muted">Create budgets to track your spending and stay on target.</p>
+                <a href="{% url 'create_budget' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Your First Budget
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Financial Tips and Savings Goals -->
+<div class="row mt-4">
+    <!-- Financial Tips -->
+    {% if financial_tips %}
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-lightbulb"></i> Financial Tips</h5>
+            </div>
+            <div class="card-body">
+                {% for tip in financial_tips %}
+                    <div class="tip-item mb-3">
+                        <h6 class="text-{{ tip.get_priority_color }}">{{ tip.title }}</h6>
+                        <p class="small text-muted mb-0">{{ tip.content|truncatechars:150 }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Savings Goals -->
+    {% if savings_goals %}
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-target"></i> Savings Goals</h5>
+            </div>
+            <div class="card-body">
+                {% for goal in savings_goals %}
+                    <div class="goal-item mb-3">
+                        <div class="d-flex justify-content-between">
+                            <h6>{{ goal.title }}</h6>
+                            <small class="text-muted">${{ goal.current_amount }} / ${{ goal.target_amount }}</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" 
+                                 role="progressbar" 
+                                 style="width: {{ goal.progress_percentage }}%"
+                                 aria-valuenow="{{ goal.progress_percentage }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                        <small class="text-muted">{{ goal.progress_percentage|floatformat:1 }}% complete</small>
+                    </div>
+                {% endfor %}
+                <div class="text-center">
+                    <a href="{% url 'savings_goals' %}" class="btn btn-outline-primary btn-sm">View All Goals</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="{% url 'add_transaction' %}" class="btn btn-primary btn-block mb-2">
+                            <i class="fas fa-plus"></i> Add Transaction
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'create_budget' %}" class="btn btn-info btn-block mb-2">
+                            <i class="fas fa-chart-pie"></i> Create Budget
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'reports_view' %}" class="btn btn-success btn-block mb-2">
+                            <i class="fas fa-chart-line"></i> View Reports
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'category_list' %}" class="btn btn-secondary btn-block mb-2">
+                            <i class="fas fa-tags"></i> Manage Categories
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize budget progress if budget section exists
+    const budgetProgressElements = document.querySelectorAll('.budget-progress');
+    if (budgetProgressElements.length > 0) {
+        initializeBudgetProgress();
+    }
+    
+    // Custom budget progress update for dashboard
+    function initializeBudgetProgress() {
+        fetch('/api/budget-progress/')
+            .then(response => response.json())
+            .then(data => {
+                // Update dashboard budget cards with latest data
+                data.budgets.forEach(budget => {
+                    updateDashboardBudgetCard(budget);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading budget progress:', error);
+            });
+    }
+    
+    // Update budget card on dashboard
+    function updateDashboardBudgetCard(budget) {
+        // This function can be used to dynamically update budget cards
+        // Currently budget data is rendered server-side, but this allows for real-time updates
+        console.log('Budget data loaded:', budget);
+    }
+});
+</script>
+{% endblock %}

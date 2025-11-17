@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Budget - Budget Planner{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-plus"></i> Create Budget</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.category.id_for_label }}" class="form-label">Category *</label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.category.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Select an expense category to set a budget limit.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.amount.id_for_label }}" class="form-label">Budget Amount *</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            {{ form.amount }}
+                        </div>
+                        {% if form.amount.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.amount.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Set the maximum amount you want to spend in this category.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.month.id_for_label }}" class="form-label">Month *</label>
+                                {{ form.month }}
+                                {% if form.month.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.month.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.year.id_for_label }}" class="form-label">Year *</label>
+                                {{ form.year }}
+                                {% if form.year.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.year.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Tip:</strong> Set realistic budget amounts based on your past spending patterns. You can always adjust them later.
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'budget_overview' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Create Budget
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Budget Guidelines -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-lightbulb"></i> Budget Guidelines</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <h6>50/30/20 Rule</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-home text-primary"></i> <strong>50%</strong> - Needs (rent, utilities, groceries)</li>
+                            <li><i class="fas fa-shopping-bag text-success"></i> <strong>30%</strong> - Wants (entertainment, dining out)</li>
+                            <li><i class="fas fa-piggy-bank text-warning"></i> <strong>20%</strong> - Savings & debt payment</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
